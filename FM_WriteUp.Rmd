@@ -1,0 +1,285 @@
+---
+# IMPORTANT: Change settings here, but DO NOT change the spacing.
+# Remove comments and add values where applicable.
+# The descriptions below should be self-explanatory
+
+title: "Application of PCA and PVCA to a portfolio of 20 stocks in South Africa"
+#subtitle: "This will appear as Right Header"
+
+documentclass: "elsarticle"
+
+# --------- Thesis title (Optional - set to FALSE by default).
+# You can move the details below around as you please.
+Thesis_FP: FALSE
+# Entry1: "An unbelievable study with a title spanning multiple lines."
+# Entry2: "\\textbf{Nico Katzke}" # textbf for bold
+# Entry3: "A thesis submitted toward the degree of Doctor of Philosophy"
+# Uni_Logo: Tex/Logo.png # Place a logo in the indicated location (from your root, e.g. defaults to ~/Tex/Logo.png) and uncomment this line. Leave uncommented for no image
+# Logo_width: 0.3 # If using a logo - use this to set width (size) of image
+# Entry4: "Under the supervision of: \\vfill Prof. Joe Smith and Dr. Frank Smith"
+# Entry5: "Stellenbosch University"
+# Entry6: April 2020
+# Entry7:
+# Entry8:
+
+# --------- Front Page
+# Comment: ----- Follow this pattern for up to 5 authors
+AddTitle: TRUE # Use FALSE when submitting to peer reviewed platform. This will remove author names.
+Author1: "Wouter Bezuidenhout"  # First Author - note the thanks message displayed as an italic footnote of first page.
+Ref1: "Stellenbosch Univeristy, South Africa" # First Author's Affiliation
+Email1: "20088418\\@sun.ac.za" # First Author's Email address
+
+# Author2: "John Smith"
+# Ref2: "Some other Institution, Cape Town, South Africa"
+# Email2: "John\\@gmail.com"
+# CommonAffiliation_12: TRUE # If Author 1 and 2 have a common affiliation. Works with _13, _23, etc.
+
+# Author3: "John Doe"
+# Email3: "Joe\\@gmail.com"
+
+# CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
+
+# Comment out below to remove both. JEL Codes only given if keywords also given.
+keywords: "Principal Component Analysis \\sep Principal Variance Component Analysis" # Use \\sep to separate
+JELCodes: "C38 \\sep C58"
+
+# ----- Manage headers and footers:
+#BottomLFooter: $Title$
+#BottomCFooter:
+#TopLHeader: \leftmark # Adds section name at topleft. Remove comment to add it.
+BottomRFooter: "\\footnotesize Page \\thepage" # Add a '#' before this line to remove footer.
+addtoprule: TRUE
+addfootrule: TRUE               # Use if footers added. Add '#' to remove line.
+
+# --------- page margins:
+margin: 2.3 # Sides
+bottom: 2 # bottom
+top: 2.5 # Top
+HardSet_layout: TRUE # Hard-set the spacing of words in your document. This will stop LaTeX squashing text to fit on pages, e.g.
+# This is done by hard-setting the spacing dimensions. Set to FALSE if you want LaTeX to optimize this for your paper.
+
+# --------- Line numbers
+linenumbers: FALSE # Used when submitting to journal
+
+# ---------- References settings:
+# You can download cls format here: https://www.zotero.org/ - simply search for your institution. You can also edit and save cls formats here: https://editor.citationstyles.org/about/
+# Hit download, store it in Tex/ folder, and change reference below - easy.
+bibliography: Tex/ref.bib       # Do not edit: Keep this naming convention and location.
+csl: Tex/harvard-stellenbosch-university.csl # referencing format used.
+# By default, the bibliography only displays the cited references. If you want to change this, you can comment out one of the following:
+nocite: '@Texevier, @tsay, @tsay2' # Add all items in bibliography, whether cited or not
+# nocite: |  # add specific references that aren't cited
+#  @grinold2000
+#  @Someoneelse2010
+
+# ---------- General:
+RemovePreprintSubmittedTo: TRUE  # Removes the 'preprint submitted to...' at bottom of titlepage
+Journal: "Journal of Finance"   # Journal that the paper will be submitting to, if RemovePreprintSubmittedTo is set to TRUE.
+toc: FALSE                       # Add a table of contents
+numbersections: TRUE             # Should sections (and thus figures and tables) be numbered?
+fontsize: 11pt                  # Set fontsize
+linestretch: 1.2                # Set distance between lines.
+link-citations: TRUE            # This creates dynamic links to the papers in reference list.
+
+### Adding additional latex packages:
+# header-includes:
+#    - \usepackage{colortbl} # Add additional packages here.
+
+output:
+  pdf_document:
+    keep_tex: TRUE
+    template: Tex/TexDefault.txt
+    fig_width: 3.5 # Adjust default figure sizes. This can also be done in the chunks of the text.
+    fig_height: 3.5
+abstract: |
+  This paper investigates two dimension reduction topics: principal component analysis and principal variance component analysis. The techniques are applied to a portfolio of 20 blue chip South African stocks for the period from 2013/01/01 - 2021/10/29. The importance of the paper is methodological, specifically the application of PVCA to the South African Market.   
+---
+
+<!-- First: Set your default preferences for chunk options: -->
+
+<!-- If you want a chunk's code to be printed, set echo = TRUE. message = FALSE stops R printing ugly package loading details in your final paper too. I also suggest setting warning = FALSE and checking for warnings in R, else you might find ugly warnings in your paper. -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
+# Note: Include = FALSE implies the code is executed, but not printed in your pdf.
+# warning and message = FALSE implies ugly messages and warnings are removed from your pdf.
+
+
+```
+
+
+<!-- ############################## -->
+<!-- # Start Writing here: -->
+<!-- ############################## -->
+
+# Introduction \label{Introduction}
+
+Elementary analysis of financial returns usually assume time-invariant or constant covariances (volatility), known as homoskedasticity. It is well-known that financial returns posses conditional heteroskedastic, or time-varying conditional covariances, known as volatility [tsay2]. The pursuit of modeling conditional heteroskedasticity is important, and resulted in a Nobel Prize for Robert Engle. My paper extends this idea to argue that is more useful to known if volatility is common between different time-series. The challenge with multivariate volatility modeling is the growth in dimensions. For K variables, the covariance matrix has K(K+1)/2 processes to estimate. Therefore, I implement two dimension reduction techniques to engage a more manageable set of estimates. I use two methods to explore this: a principal component analysis (PCA) and a principal variance component analysis (PVCA). 
+
+PCA finds structure in the covariance matrix to locate low-dimensional sub-spaces that contain most of the variation of the data [ruppert]. PCA is not feature selection, as each PCA is just a linear combination of all original variables. PCA is especially useful for highly correlated variables like financial returns, as PCAs are uncorrelated from one another. An example of how this is useful, say an analyst would be interested in the behavior of an index with 50 stocks. After implementing PCA, the analyst could focus on prediction of a dozen PCAs responsible for more than 90 percent of the variation in the data, instead of focusing on all 50 stocks simultaneously [@ruppert]. On the other hand, PVCA is a generalization of PCA to detect common volatility factors in returns. The aim of PVCA is to find a small number of common volatility components in order to find a linear combination of the series with no conditional heteroscedasticity [hu].
+
+The computation required for PVCA is strenuous, and to keep a positive semi-definite matrix is difficult as dimensions grow. In @hu, the author uses 7 currencies, whereas in @engle, the author uses 18 indexes. Therefore, for my application, I have decided to apply these techniques to a portfolio of 20 blue chip stocks listed on the JSE. My aim is the showcasing of the two methodologies applied to equity returns. The paper is structured as follows. Section \ref{Meth} discusses the methodologies for PCA and PVCA in detail so that the paper is as self-contained as possible. Section \ref{Data} discusses the data's properties and transformations implemented. Section \ref{Results} discusses the results of the two methods. Section \ref{Conclusion} concludes. 
+
+#  Methodologies \label{Meth}
+
+Data is required to look as follows: one needs a sample $\mathbf{Y}_i = (Y_{i,1},..., Y_{i,d}), i=1,...,n$ of d-dimensional random vectors with mean vector $\mathbf{\mu}$ and covariance matrix $\mathbf{\Sigma}$. PCA is focused on extracting structure from the covariance matrix. PCA produces zero contemporaneous correlations, meaning PCA overlooks the dynamic dependence between the volatility processes [@ISLR]. PVCA focuses on the dynamic dependence of volatility. The motivation with PVCA is with a small number of common volatility components, one can find a linear combinations of the return series that contains no conditional heteroscedasticity [hu]. In PCA, one performs a spectral decomposition of the covariance matrix. Following @hu, the authors extend this to propose a sample estimate of a cumulative generalized kurtosis matrix to summarize the dynamic volatility dependence of the multivariate time series. Spectral analysis of this generalized matrix is then used to define PVCs. In order to determine that no conditional heteroscedasticity is present in the PVC process, the authors conduct a generalized Ling–Li test statistic. It is worth noting that @engle conducted a study with a similar aim, but used noticeably different methods. @engle conducted a pairwise procedure to test for no conditional heteroscedasticity after modeling using GARCH and M-GARCH models. 
+
+# Data \label{Data}
+
+The return series that I have chosen for my application is a portfolio of 20 blue chip, large cap equities listed on the Johannesburg Stock Exchange (JSE). The sample period is from 2013/01/01 to 2021/10/29. The return series has been logged. The following 20 stocks are in the portfolio. I initially tried to conduct this with the ALSI Top 40, but there are numerous nuances with such an application that require further thinking in order to achieve. 
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c c|}
+\hline
+Short name (ticker) & Sector \\
+\hline\hline 
+BHP Group (BHP) & Resources \\
+Anglo American (AGL) & Resources \\
+Sasol (SOL) & Resources \\
+Anglogold Ashanti (ANG) & Resources \\
+Richemont (CFR) & Industrials \\
+MTN Group (MTN) & Industrials \\
+Shoprite (SHP) & Industrials \\
+Mondi (MNP) & Industrials \\
+Aspen Pharmaceuticals (APN) & Industrials \\
+Naspers (NPN) & Industrials \\
+Vodacom (VOD) & Industrials \\
+Standard Bank (SBK) & Financials \\
+Firstrand (FSR) & Financials \\
+ABSA (ABG) & Financials \\
+Growthpoint (GRT) & Financials \\
+Nedbank (NED) & Financials \\
+Investec Ltd. (INL) & Financials \\
+Investec Plc. (INP) & Financials \\
+Remgro (REM) & Financials \\
+Sanlam (SLM) & Financials \\ [1ex] 
+\hline
+\end{tabular}
+\caption{Portfolio of 20 stocks}
+\end{table}
+
+In order to get an idea of the series, I plot them below. Figure \ref{Figure_1} shows no noticeable missing periods of data, furthermore, one can already see periods of high variance in some stock returns. There is a period in 2020 where Sasol (SOL) shows especially high variance. In the next section, I run the PCA and PVCA, and discuss their results. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.6]{figures/Figure_1.jpeg}
+\caption{Stock returns of the portoflio}\label{Figure_1}
+\end{figure}
+
+# Results \label{Results}
+
+## Principal Component Analysis 
+
+It is recommended to standardize the variables when one conducts PCA. If variables are on different scales, then variables with greater variance in magnitude will dominate the analysis and therefore bias the results [@ISLR]. In my case, with logged returns, it should not be necessary, but I do so for completeness. Furthermore, I check for missing returns and find a small amount in Anglogold Ashanti (ANG) and Aspen Pharmaceuticals (APN). I impute these by drawing from their distribution. I calculate the PCAs using the prcomp function in R from the stats package. This function decomposes the d-dimensional into d contemporaneously uncorrelated PCAs, and ranks them based on the amount of variability explained by each. Figure \ref{Figure_2} displays the scree plot of the PCAs. A scree plot shows the amount of variability explained by each PCA. There are 20 PCAs, but I have chosen to display the first 12. The first PCA explains 36,5 percent of the variability of all 20 stock returns. To complement this, Table \ref{Table_1} shows the cumulative proportions of variance explained by each PCA. With 11 PCAs, one can explain more than 90 percent of the variance in the portfolio of 20 stock returns. Figure \ref{Figure_3} takes a closer look at PCA 1 to understand which shares underlie its importance. The figure shows that Sasol (SOL) represents most of the contribution, followed by Nedbank (NED), Absa (ABG), Firstrand (FSR), MTN and Standard Bank (SBK). 
+
+\begin{figure}[!tbp]
+\centering
+\begin{minipage}[b]{7cm}
+\includegraphics[scale=0.45]{figures/Figure_2.jpeg}
+\caption{Scree plot fo PCAs}\label{Figure_2}
+\end{minipage}
+\hspace{0.05cm}
+\hfill
+\begin{minipage}[b]{7cm}
+\includegraphics[scale = 0.45]{figures/Figure_3.jpeg}
+\caption{Individual contributions to PCA 1}\label{Figure_3}
+\end{minipage}
+\hspace{0.1cm}
+\hfill
+\end{figure}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c c c c c c c c c c c c c|}
+\hline
+Category & PC1 & PC2 & PC3 & PC4 & PC5 & PC6 & PC7 & PC8 & PC9 & PC10 & PC11 & PC12 \\
+\hline\hline 
+Eigenvalues & 43,3 & 30,3 & 21,6 & 13,4 & 10,3 & 8,4 & 7,2 & 6,4 & 3,5 & 2,4 & 1,8 & 1,6 \\
+Prop of Variance (\%) & 36,5 & 12,5 & 9,2 & 7,1 & 5 & 4,6 & 4,1 & 4 & 3 & 2,2 & 2,1 & 1,6 \\
+Cum Prop (\%) & 36,5 & 49 & 58,3 & 65,4 & 70,4 & 75 & 79,1 & 83,2 & 86,1 & 88,3 & 90,4 & 92,1 \\ 
+\hline
+\end{tabular}
+\caption{Importance of PCAs}\label{Table_1}
+\end{table}
+
+For a deeper look at the PCAs, it is worth investigating the eigenvectors. Appendix Table \ref{Appendix_1} shows the eigenvectors for each PCA. Following the approach of @ruppert, the first eigenvector has only negative values, meaning for an increase in PCA 1 all returns should decrease. Eigenvector 2 has 7 negative values and 13 positive values, where the negative values are all four resources stocks, as well as the following industrials: Naspers, Mondi and Richemont. Variation along this eigenvector has resource stocks and three industrials moving in the opposite direction to other returns. It is not uncommon to see resource move opposite to the market, and therefore this PCA accounts for 12,5\% of variation. For eigenvector three, all values are negative except for Anglo American, BHP, Richemont, Investec Ltd, Investec Plc, Mondi and Sasol. This PCA accounts for 9,2\% of the variation. Both PCA 2 and 3 should not be over-confidently interpreted, but rather modeled quantitatively. In conclusion to the PCAs, logically, it seems that sectors have common variation and that PCA 1 represents an overall market factor. The PCAs derived are now able to be used in prediction modeling by an analyst who will now have less dimensions to work with opposed to having to work with all 20 stocks. There is no golden rule about how many PCAs to use, but I argue that 90 percent of variation explained by 11 PCAs is suitable. For interest sake, if I modeled stocks only from the same sector (say Resources), one would observe the 90 percent threshold reached in a handful of PCAs opposed to a dozen. In the next subsection, I turn to the results of the PVCA. 
+
+## Principal Variance Component Analysis
+
+@hu proposed the idea of PVCA, the generalization of PCA methods to focus more directly on modeling common multivariate volatility. The method requires the specification of a Vector-autoregression (VAR) model to account for serial correlation. According to the Akaike Information Criterion, my data requires only two lags where as in @hu, the authors uses 5 lags. After running Portmanteau tests to detect serial correlation, I am not completely satisfied that serial correlation is not present, however, no additional amount of lags remove this. Additionally, the data has been logged and differenced (working with returns), and therefore I proceed. 
+
+After running the model and producing 20 PVCAs, I conduct univariate ARCH tests on all 20 PVCAs. I find that the 19th PVCA has no conditional heteroscedasticity. In the @hu paper, this result was found with their seventh of seven currencies. This implies that there certainly exists common volatility factors in my portfolio of 20 stocks [@hu]. Figure \ref{Figure_6} presents the time series of selected PVCAs. Although, the F-Tests confirm no conditional heteroscedasticity, the variances do not look much different with the eye. Additional ACF plots are not informative either. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=.45]{figures/Figure_6.jpeg}
+\caption{Time Series of selected PVCAs}\label{Figure_6}
+\end{figure}
+
+Figure \ref{Figure_4} displays the scree plot of the PVCAs. In this case, the scree plot shows the amount of volatility explained by each PVCA. The first PVCA explains 27,7 percent, the second 19,4 percent and the third 13,8 percent, of the volatility of all 20 stock returns. Cumulatively, the first three PVCAs account for 61 percent of volatility. Table \ref{Table_1} shows the cumulative proportions of volatility explained by each PVCA more specifically. With 12 PVCAs, one can explain 96,2 percent of the volatility in the portfolio of 20 stock returns. Figure \ref{Figure_5} takes a closer look at PVCA 1 to understand which shares underlie its importance. The figure shows that Anglo American (ANG) and Shoprite (SHP) are most important in the first PVCA. This is a surprising result. In order to understand the PVCAs better, I turn to looking at their eigenvectors. 
+
+Table \ref{Figure_3} in the appendix contains the eigenvectors for the individual stocks for the first 12 PVCAs (explaining 96\% of volatility). Note that I have rounded off for the values for presentability. If the F-test for conditional heteroscedasticity not present at PVCA 19, then my interpretation is that the first 18 PVCAs account for all the common and time-varying volatility, whereafter the 19th PVCA shows time-invariant covariance. Overall, the PVCA model is a good attempt at a unique method to modeling common volatility. Additionally, a more interesting application might highlight the usefulness of the method more. @hu had 7 variables in their sample, whereas I have 20, and @engle had 18 - although @engle used vastly different methods. In my calculations, as one added more variables, the process immediately became more complex computationally and mathematically.  
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c c c c c c c c c c c c c|}
+\hline
+PVCA & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\
+\hline\hline 
+Eigenvalues & 43,3 & 30,3 & 21,6 & 13,4 & 10,3 & 8,4 & 7,2 & 6,4 & 3,5 & 2,4 & 1,8 & 1,6 \\
+Prop of Volatility (\%) & 27,7 & 19,4 & 13,8 & 8,5 & 6,6 & 5,4 & 4,6 & 4,1 & 2,3 & 1,6 & 1,2 & 1 \\ 
+Cum Prop (\%) & 27,7 & 47,1 & 60,9 & 69,4 & 76 & 81,4 & 86 & 90,1 & 92,4 & 94 & 95,2 & 96,2 \\ 
+\hline
+\end{tabular}
+\caption{PVCAs}\label{Table_2}
+\end{table}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=.45]{figures/Figure_4.jpeg}
+\caption{PVCAs proportions explained}\label{Figure_4}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=.45]{figures/Figure_5.jpeg}
+\caption{Individual contributions to PVCA 1}\label{Figure_5}
+\end{figure}
+
+# Conclusion \label{Conclusion}
+
+Modelling common volatility has been the pursuit of numerous authors in the past. Options traders are often concerned with modelling common implied volatility, too. However, the challenge with multivariate volatility modeling is the growth in dimensions of parameters required to be estimated. For K variables, the covariance matrix has K(K+1)/2 processes to estimate. Dimension reduction techniques are therefore crucial if one is to build a model that is accurate and efficient. In this paper, I have implemented two dimension reduction techniques, a principal component analysis and a principal variance component analysis. PCA is concerned with investigating the structure of covariance matrix in order to represent the high-dimensional series with a low-dimensional uncorrelated PCAs. PVCAs generalize the process of PCAs by estimating a cumulative generalized kurtosis matrix to summarize the dynamic volatility dependence of the multivariate time series. The motivation of PVCAs is to find a PVCA combination that is a linear combinations of the return series that contains no conditional heteroscedasticity.
+
+My PCA model was successful and it logically it seemed that sectors were moving together within the PCA. With 12 PCAs, my model could account for more than 92 percent of the variation of the 20-stock portfolio. The noticeable contributions to explaining variation within PCA 1 were Sasol, Nedbank, Absa, Firstrand, MTN and Standard Bank. This PCA is ready to be used in further analysis. The PVCA model was a good attempt at a unique method to modelling common volatility. The first 12 PVCAs account for 96,2 percent of the volatility. The F-tests that I conducted to test for the presence of conditional heteroscedasticity showed that PVCA 19 had no conditional heteroscedasticity. This means that the common volatility was accounted for in the previous PVCAs. Surprisingly, in the first PVCA, Anglo American and Shoprite were the most important contributors. In conclusion, more work needs to be done to elaborate on the R-package that models PVCA and a more suitable application needs to be conducted to really test the usefulness of the method. 
+
+
+<!-- Make title of bibliography here: -->
+<!-- \newpage -->
+
+\newpage
+
+# References {-}
+
+<div id="refs"></div>
+
+\newpage
+
+# Appendix {-}
+
+## Appendix A {-}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.3]{figures/Table_2.png}
+\caption{Eigenvectors of PCAs}\label{Appendix_1}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.3]{figures/Table_1.png}
+\caption{Eigenvectors of PVCA}\label{Table_3}
+\end{figure}
+
+
+
